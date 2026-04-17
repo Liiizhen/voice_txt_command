@@ -1,7 +1,8 @@
-torch
-transformers
-accelerate
-bitsandbytes
-soundfile
+torch>=2.0
+torchvision
+transformers>=4.30
+groundingdino-py>=0.4
+timm
 Pillow
-PyYAML
+opencv-python-headless
+numpy

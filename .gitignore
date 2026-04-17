@@ -1,7 +1,22 @@
+# Models (too large for git)
+models/
+*.pth
+*.onnx
+*.bin
+*.pt
+
+# Compiled
+kcf_main
+*.o
+
+# Output
+*.mp4
+result.*
+
+# Python
 __pycache__/
 *.pyc
 *.log
-data/
-hf_models/
-*.pt
-*.onnx
+
+# OS
+.DS_Store

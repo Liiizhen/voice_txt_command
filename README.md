@@ -1,52 +1,51 @@
-# Voice -> Text -> Command Workflow
+# Open-Vocabulary Real-Time Object Tracker
 
-This folder provides a minimal offline workflow:
-1) Whisper-small transcribes an audio file into text.
-2) Qwen2.5-7B-Instruct converts text into a JSON command.
-3) Qwen2.5-VL-7B-Instruct can generate a bbox from transcript + image.
+C++ KCF tracker + Grounding DINO open-vocabulary detector.
+Track any object described in natural language in real-time.
 
-## Files
-- `workflow.py`: end-to-end audio -> command JSON
-- `asr_whisper.py`: audio -> transcript
-- `command_from_text.py`: transcript -> command JSON
-- `bbox_from_vlm.py`: transcript + image -> command JSON + bbox
-- `config.yaml`: prompts + action/attribute hints
-- `requirements.txt`: Python dependencies
-
-## Setup
+## Architecture
 ```
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+C++ main process (KCF tracker, ~3ms/frame)
+    ↕ pipe (stdin/stdout) + shared memory (zero-copy frame)
+Python subprocess (Grounding DINO, ~155ms async)
 ```
 
-## Run
+## Directory Structure
 ```
-python workflow.py --audio /path/to/command.wav
-```
-
-Optional:
-```
-python workflow.py --audio /path/to/command.wav --output command.json
-```
-
-Split pipeline (decoupled):
-```
-python asr_whisper.py --audio /path/to/command.wav --output transcript.txt
-python command_from_text.py --text-file transcript.txt --output command.json
+deploy/
+├── kcf_main.cpp              # C++ tracker
+├── gdino_pipe_server.py      # GDino detection server
+├── requirements.txt          # Python dependencies
+├── setup.sh                  # Install + compile
+├── run.sh                    # Launch tracker
+└── models/                   # Created by setup.sh
+    ├── bert-base-uncased/    # BERT (~420MB)
+    ├── groundingdino_swinb_cogcoor.pth  # GDino (~895MB)
+    └── GroundingDINO_SwinB.cfg.py
 ```
 
-Direct VLM pipeline (skip LLM):
-```
-python asr_whisper.py --audio /path/to/command.wav --output transcript.txt
-python bbox_from_vlm.py --text-file transcript.txt --image /path/to/image.png --output command_bbox.json
+## Quick Start
+```bash
+# 1. Setup (one-time)
+bash setup.sh
+
+# 2. Run
+bash run.sh --video input.mp4 --query "brown cup"
+bash run.sh --video input.mp4 --query "mouse" --output result.mp4
+
+# 3. Camera mode (future)
+bash run.sh --camera 0 --query "red bottle"
 ```
 
-## Output Format
-```json
-{
-  "action": "grasp",
-  "object": "cup",
-  "attributes": ["red"]
-}
+## Performance (RTX 3090)
+| Resolution | FPS | Skip |
+|-----------|-----|------|
+| 640p | 200fps | 0 |
+| 1080p | 125fps | <5% |
+
+## Edge Deployment (Jetson)
+```bash
+# Same setup, just change CUDA version
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+bash setup.sh
 ```
