@@ -10,8 +10,9 @@ kcf_main
 *.o
 
 # Output
-*.mp4
 result.*
+output.*
+!demo_*.mp4
 
 # Python
 __pycache__/

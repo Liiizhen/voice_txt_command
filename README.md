@@ -37,9 +37,15 @@ bash run.sh --video input.mp4 --query "mouse" --output result.mp4
 bash run.sh --camera 0 --query "red bottle"
 ```
 
-## Performance
+## Demo
 
-| GPU | KCF Tracker | Grounding DINO (async) |
-|-----|------------|----------------------|
-| RTX 5090 | ~3ms/frame | ~70ms |
-| RTX 3090 | ~3ms/frame | ~155ms |
+Tracking "brown cup" on 640p video (RTX 5090):
+
+https://github.com/Liiizhen/voice_txt_command/raw/main/demo_brown_cup_640p.mp4
+
+## Performance (RTX 5090)
+
+| Resolution | KCF Tracker | Grounding DINO (async) | Skip |
+|-----------|------------|----------------------|------|
+| 640p | ~3ms/frame | ~70ms | 0 |
+| 1080p | ~3ms/frame | ~70ms | ~4% |
