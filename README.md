@@ -1,22 +1,27 @@
 # Open-Vocabulary Real-Time Object Tracker
 
-C++ KCF tracker + Grounding DINO open-vocabulary detector.
-Track any object described in natural language in real-time.
+End-to-end voice-guided object tracking system.
+Voice input → ASR → NLP → Open-vocabulary detection → Real-time tracking.
 
 ## Architecture
 ```
+Voice Input (socket audio stream)
+    ↓ High-pass filter + VAD
+    ↓ Whisper ASR (~50ms)
+    ↓ spaCy NLP (~3ms)
+    ↓ "brown cup"
 C++ main process (KCF tracker, ~3ms/frame)
-    ↕ pipe (stdin/stdout) + shared memory (zero-copy frame)
-Python subprocess (Grounding DINO, ~155ms async)
+    ↕ pipe + shared memory
+Python subprocess (Grounding DINO, ~70ms async)
 ```
 
 ## Directory Structure
 ```
-deploy/
-├── kcf_main.cpp              # C++ tracker
-├── gdino_pipe_server.py      # GDino detection server
+├── kcf_main.cpp              # C++ KCF tracker
+├── gdino_pipe_server.py      # Grounding DINO detection server
+├── voice_input.py            # Voice input: ASR + VAD + NLP
 ├── requirements.txt          # Python dependencies
-├── setup.sh                  # Install + compile
+├── setup.sh                  # One-click install
 ├── run.sh                    # Launch tracker
 └── models/                   # Created by setup.sh
     ├── bert-base-uncased/    # BERT (~420MB)
@@ -29,12 +34,11 @@ deploy/
 # 1. Setup (one-time)
 bash setup.sh
 
-# 2. Run
+# 2. Run with text query
 bash run.sh --video input.mp4 --query "brown cup"
-bash run.sh --video input.mp4 --query "mouse" --output result.mp4
 
-# 3. Camera mode (future)
-bash run.sh --camera 0 --query "red bottle"
+# 3. Run with voice input (start audio client separately)
+bash run.sh --video input.mp4 --voice
 ```
 
 ## Demo

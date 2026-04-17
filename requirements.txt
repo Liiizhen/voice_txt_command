@@ -6,3 +6,4 @@ timm
 Pillow
 opencv-python-headless
 numpy
+spacy>=3.5

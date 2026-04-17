@@ -41,6 +41,10 @@ if [ ! -d models/bert-base-uncased ] || [ ! -f models/bert-base-uncased/pytorch_
 fi
 
 
+# 4. spaCy model
+echo "[4/4] Checking spaCy model..."
+$PYTHON -m spacy download en_core_web_sm 2>&1 | tail -2
+
 echo ""
 echo "=== Setup complete ==="
 echo "Total model size: $(du -sh models/ | cut -f1)"
