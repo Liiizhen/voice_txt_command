@@ -37,15 +37,9 @@ bash run.sh --video input.mp4 --query "mouse" --output result.mp4
 bash run.sh --camera 0 --query "red bottle"
 ```
 
-## Performance (RTX 3090)
-| Resolution | FPS | Skip |
-|-----------|-----|------|
-| 640p | 200fps | 0 |
-| 1080p | 125fps | <5% |
+## Performance
 
-## Edge Deployment (Jetson)
-```bash
-# Same setup, just change CUDA version
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
-bash setup.sh
-```
+| GPU | KCF Tracker | Grounding DINO (async) |
+|-----|------------|----------------------|
+| RTX 5090 | ~3ms/frame | ~70ms |
+| RTX 3090 | ~3ms/frame | ~155ms |
