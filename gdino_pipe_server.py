@@ -44,12 +44,12 @@ for line in sys.stdin:
     line = line.strip()
     if line == "STOP":
         break
-    parts = line.split()
+    parts = line.split(None, 4)
     if parts[0] == "DETECT":
         fidx = int(parts[1])
-        query = parts[2]
-        orig_h = int(parts[3])
-        orig_w = int(parts[4])
+        orig_h = int(parts[2])
+        orig_w = int(parts[3])
+        query = parts[4]
         t0 = time.perf_counter()
 
         frame_orig = frame_buf.copy()
